@@ -1,0 +1,150 @@
+// ==UserScript==
+// @name         🌻Edited TS-Mod
+// @version      1.0
+// @description  🔴 Use TS Mod and edited TS-Mod at the same time!
+// @author       Dandelion
+// @match       https://evades.io/*
+// @match       https://evades.online/*
+// @match       https://eu.evades.io/*
+// @run-at      document-start
+// @grant        none
+// @require     https://greasyfork.org/scripts/438620-workertimer/code/WorkerTimer.js?version=1009025
+// ==/UserScript==
+console.log("Edited TS-Mod (f0e130) loaded!");
+/*
+____________________                    .___           ___________    .___.__  __             .___
+\__    ___/   _____/   _____   ____   __| _/           \_   _____/  __| _/|__|/  |_  ____   __| _/
+  |    |  \_____  \   /     \ /  _ \ / __ |    ______   |    __)_  / __ | |  \   __\/ __ \ / __ |
+  |    |  /        \ |  Y Y  (  <_> ) /_/ |   /_____/   |        \/ /_/ | |  ||  | \  ___// /_/ |
+  |____| /_______  / |__|_|  /\____/\____ |            /_______  /\____ | |__||__|  \___  >____ |
+                 \/        \/            \/                    \/      \/               \/     \/
+ᴮʸ ᴰᵃᶰᵈᵉˡᶤᵒᶰ
+
+     /\                                                                                       /\
+    / /                                                                                      / /
+   / /    ______   ______   ______   ______   ______   ______   ______   ______   ______    / /
+  / /    /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/   / /
+ / /                                                                                      / /
+ \/                                                                                       \/
+
+
+Extra script:          TS-Mod-addons 1.0.0: Anti-afk+CustomTag
+
+𝙾𝚛𝚒𝚐𝚒𝚗𝚊𝚕 𝚜𝚌𝚛𝚒𝚙𝚝:      https://raw.githubusercontent.com/Neondertalec/tsmod/main/tsmod.js
+
+*/
+
+
+
+//TS-Mod-addons 1.0.0 by DepressionOwU
+
+function addReplaces(t,n){globalThis.extraReplaces!=null?globalThis.extraReplaces.push([t,n]):globalThis.extraReplaces=[[t,n]]}
+(()=>{
+    let interv = WorkerTimer.setInterval(()=>{
+
+        if(globalThis.client){
+            globalThis.client.events.addEventListener(globalThis.client.events.events.chatMessage, (data)=>{
+                console.log(data);
+            });
+            false&&globalThis.client.events.addEventListener(globalThis.client.events.events.playerCountChange, (data)=>{
+                for(let player of data.players){
+                    globalThis.client.sendSystemMessage(`${player.name} ${data.action == `left`? `left` : `joined as ${globalThis.id2name(player.logs.heroes[player.logs.heroes.length-1][0])}`}!`);
+                }
+            });
+            console.log("its a ", globalThis.client);
+            WorkerTimer.clearInterval(interv);
+
+            globalThis.client.textCommandConstsE.push([
+                -1,
+                `afk`,
+                `toggle afk.`,
+                (tcmd)=>{
+                    if(tcmd[0] == -1){
+                        tcmd[0] = WorkerTimer.setInterval(()=>{
+                            window.client.state.chatMessages.push("/");
+                            globalThis.client.sendSystemMessage(`<i>! AntiAfk:ON</i>`);
+                        }, 1000*60*7.5)
+                        globalThis.client.sendSystemMessage(`Anti-AFK is now turned ON!`);
+                    }else{
+                        WorkerTimer.clearInterval(tcmd[0]);
+                        tcmd[0] = -1;
+                        globalThis.client.sendSystemMessage(`Anti-AFK is now turned OFF!`);
+                    }
+                }
+            ]);
+            globalThis.client.textCommandConstsE.push([
+                -1,
+                `resizec`,
+                `resize the chat.`,
+                (tcmd, msg)=>{
+                    let chatb = document.getElementById("chat");
+                    let chatc = chatb?.childNodes[0];
+                    if(chatb && chatc){
+                        let messageS = msg.split(" ");
+                        if(messageS.length > 1){
+                            if(messageS[1] == "r"){
+                                chatb.style.height = "200px";
+                                chatc.style.height = "165px";
+                                globalThis.client.sendSystemMessage(`Chat height is resetd!`);
+                            }else{
+                                let height = parseInt(messageS[1]);
+                                if(!isNaN(height)){
+                                    chatb.style.height = height+"px";
+                                    chatc.style.height = (height - 35)+"px";
+                                    globalThis.client.sendSystemMessage(`Chat height is setd to ${height}px !`);
+                                }
+                            }
+                        }else{
+                            globalThis.client.sendSystemMessage(`{prefix}resizec {number in pixels | 600}`);
+                        }
+
+                    }
+
+                }
+            ]);
+        }
+    }, 1000)
+    globalThis.tagsEX = {...globalThis.tagsEX,...{
+        '[ct]':['USER NAME', 'USER NAME 2'],
+    }}
+    globalThis.tagDataEX = {...globalThis.tagDataEX,...{
+        '[ct]': {presudo:"[TAG NAME]", color:"#fff"},
+    }};
+
+
+    let data = [
+        {
+            names: ["USER NAME", "USER NAME 2"],//Custom tag
+            color: "#529b77",
+            text: "[custom tag]",
+            rainbow: false,
+
+        },
+    ]
+    let styles = document.createElement('style');
+    let newihtml = "";
+    for(let tagdata of data){
+			let newarr = [];
+			for(let tname of tagdata.names){
+				newarr.push('span[arialabel="'+ tname +'"]::before')
+			}
+			newihtml += newarr.join(",") + `{
+				content: "${tagdata.text}"!important;
+				margin-right: 4px;
+				color: ${tagdata.color}!important;
+				${tagdata.rainbow?
+					`animation-name: rainbowTextkf;
+					animation-duration: 20s;
+					animation-iteration-count: infinite;`:
+					``
+				}
+			}`
+		}
+    styles.innerHTML = newihtml;
+    document.head.appendChild(styles);
+})()
+
+
+//TS-Mod-edited by Dandelion
+
+
